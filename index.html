@@ -1,244 +1,934 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ADS EMPIRE | Sales & Marketing Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ads Empire | Sales & Marketing System</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#102b55;--blue:#1769d2;--gold:#f4bd24;--bg:#f3f6fb;--ink:#15233b;--muted:#71809a;--line:#e4eaf3;--white:#fff;--green:#16a36a;--red:#dc4c55}
-*{box-sizing:border-box}body{margin:0;font:14px/1.45 Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-.app{display:flex;min-height:100vh}.sidebar{width:248px;background:linear-gradient(180deg,#0c2041,#102f60);color:white;padding:22px 14px;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:5}
-.brand{padding:8px 8px 24px;border-bottom:1px solid #ffffff22;margin-bottom:18px;display:flex;align-items:center;justify-content:center;min-height:104px}.brand-logo{display:block;width:100%;max-width:210px;height:auto;object-fit:contain}.navlabel{font-size:10px;color:#8fa7cb;text-transform:uppercase;letter-spacing:1.5px;padding:10px 12px 7px}.nav button{display:flex;gap:12px;align-items:center;width:100%;border:0;background:transparent;color:#dce7f8;padding:11px 12px;border-radius:9px;text-align:left;margin:2px 0;cursor:pointer;font-size:13px}.nav button:hover,.nav button.active{background:#1769d2;color:#fff}.nav .ico{width:19px;text-align:center;font-size:16px}.sidefoot{margin-top:auto;color:#a9bddc;font-size:11px;padding:16px 12px;border-top:1px solid #ffffff22}
-.main{margin-left:248px;width:calc(100% - 248px)}.topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:4}.top-title{font-weight:750;font-size:17px}.top-right{display:flex;align-items:center;gap:15px;color:var(--muted);font-size:12px}.pill{background:#edf4ff;color:#1769d2;padding:7px 11px;border-radius:30px;font-weight:650}
-.content{padding:27px 30px 50px;max-width:1600px;margin:auto}.welcome{background:linear-gradient(105deg,#0e2b58,#1458a9);border-radius:15px;color:white;padding:26px 30px;display:flex;justify-content:space-between;align-items:center;overflow:hidden;position:relative}.welcome:after{content:"";position:absolute;width:330px;height:330px;border:45px solid #ffffff0c;border-radius:50%;right:8%;top:-180px}.welcome h1{font-size:25px;margin:0 0 7px}.welcome p{margin:0;color:#d5e4fa}.welcome .tag{font-size:12px;color:#ffda6a;letter-spacing:1px;font-weight:700}
-h2{font-size:19px;margin:25px 0 14px}h3{font-size:15px;margin:0 0 12px}.muted{color:var(--muted)}.grid{display:grid;gap:15px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:17px}.stat,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:0 3px 12px #1a37600a}.stat .label{color:var(--muted);font-size:12px}.stat .value{font-size:27px;font-weight:800;margin:5px 0}.stat .sub{font-size:11px;color:var(--muted)}.stat .symbol{float:right;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#edf4ff;color:#1769d2;font-size:18px}
-.two{grid-template-columns:1.2fr 1fr;margin-top:16px}.three{grid-template-columns:1.1fr 1fr 1fr;margin-top:16px}
-.page{display:none}.page.active{display:block}.pagehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.pagehead h1{font-size:23px;margin:0}.pagehead p{margin:4px 0 0;color:var(--muted)}
-button,.btn{border:0;border-radius:8px;padding:9px 13px;background:var(--blue);color:white;font-weight:650;cursor:pointer;font-size:12px}.btn.secondary{background:#edf2f8;color:#34445d}.btn.gold{background:var(--gold);color:#17233a}.btn.danger{background:#fff0f0;color:#bd3d47}.btn.small{padding:6px 9px;font-size:11px}.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-input,select,textarea{font:inherit;border:1px solid #dce4ef;border-radius:8px;padding:10px 11px;background:white;color:var(--ink);outline:none;width:100%}input:focus,select:focus,textarea:focus{border-color:#6da4eb;box-shadow:0 0 0 3px #1769d218}textarea{min-height:90px;resize:vertical}.search{max-width:280px}.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:720px}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}th{color:#64748b;background:#f8fafd;font-weight:700}td{color:#34445d}tr:last-child td{border-bottom:0}.status{display:inline-block;padding:4px 8px;border-radius:20px;background:#eef4ff;color:#2764b6;font-size:10px;font-weight:700}.status.green{background:#e9f8f0;color:#12804e}.status.orange{background:#fff5e5;color:#a86b08}.status.red{background:#fff0f0;color:#bd3d47}
-.empty{padding:30px;text-align:center;color:var(--muted)}.taskrow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.taskrow:last-child{border:0}.taskrow input[type=checkbox]{width:auto}.taskname{flex:1}.taskname.done{text-decoration:line-through;color:#9aa5b5}.date{font-size:11px;color:var(--muted)}
-.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.stage{background:#f3f6fb;border-radius:9px;padding:10px;min-height:130px}.stage strong{display:block;font-size:11px;margin-bottom:8px}.leadchip{background:#fff;border:1px solid var(--line);border-radius:7px;padding:8px;margin:6px 0;font-size:11px}
-.barlist{display:grid;gap:12px}.barline{display:grid;grid-template-columns:95px 1fr 35px;gap:10px;align-items:center;font-size:11px}.bar{height:9px;background:#edf1f7;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#1769d2,#54a2f3);border-radius:10px}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.calday{background:white;border:1px solid var(--line);border-radius:8px;min-height:85px;padding:7px;font-size:11px}.calday b{display:block;margin-bottom:5px}.calday .event{background:#eaf2ff;color:#1769d2;padding:3px 5px;border-radius:4px;margin-top:3px;font-size:9px;overflow:hidden}
-.modalback{display:none;position:fixed;inset:0;background:#0b193c88;z-index:10;align-items:center;justify-content:center;padding:15px}.modalback.show{display:flex}.modal{background:white;border-radius:15px;padding:22px;width:min(560px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 70px #07142d55}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modalhead h3{font-size:18px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:grid;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:#5f6e83;font-weight:700}.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
-.note{font-size:11px;color:var(--muted);margin-top:12px}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.quick button{padding:14px 8px;background:#f0f5ff;color:#175db6}.footer{text-align:center;color:#9aa6b7;font-size:10px;margin-top:35px}
-@media(max-width:1000px){.sidebar{width:205px}.main{margin-left:205px;width:calc(100% - 205px)}.stats{grid-template-columns:repeat(2,1fr)}.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
-@media(max-width:680px){.sidebar{width:62px;padding:12px 7px}.brand{padding:8px 2px 17px;min-height:58px}.brand-logo{width:42px;height:42px;object-fit:contain}.navlabel,.nav button .navtext,.sidefoot{display:none}.nav button{justify-content:center;padding:12px 4px}.nav .ico{font-size:18px}.main{margin-left:62px;width:calc(100% - 62px)}.topbar{padding:0 14px}.content{padding:16px 12px}.welcome{padding:20px}.welcome h1{font-size:20px}.stats{gap:8px}.stat{padding:12px}.stat .value{font-size:22px}.three{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.pagehead{align-items:flex-start;gap:10px}.pagehead h1{font-size:20px}}
-
-/* Refined ADS EMPIRE visual system */
-:root{--navy:#102b55;--blue:#1769d2;--gold:#f4bd24;--bg:#f5f7fb;--ink:#17243b;--muted:#71809a;--line:#e6ebf3;--white:#fff;--green:#16a36a;--red:#dc4c55}
-body{background:#f5f7fb;color:var(--ink)}
-.sidebar{background:#fff;color:#172b4d;border-right:1px solid #e7ecf3;box-shadow:4px 0 18px rgba(20,45,80,.035);padding:20px 14px}
-.brand{background:#fff;border:1px solid #edf0f5;border-radius:14px;padding:10px 10px 16px;margin:0 0 20px;min-height:120px;box-shadow:0 3px 12px rgba(20,45,80,.04)}
-.brand-logo{max-width:218px;max-height:112px;object-fit:contain;background:#fff;border-radius:8px}
-.navlabel{color:#8a96a8;font-weight:750}
-.nav button{color:#4a5870;font-weight:600;transition:background .18s ease,color .18s ease}
-.nav button:hover{background:#edf4ff;color:#1769d2}
-.nav button.active{background:linear-gradient(100deg,#1769d2,#2d82eb);color:#fff;box-shadow:0 5px 13px rgba(23,105,210,.18)}
-.sidefoot{color:#8995a8;border-top:1px solid #edf0f5}
-.main{background:#f5f7fb}
-.topbar{box-shadow:0 2px 12px rgba(20,45,80,.025);padding:0 32px}
-.top-title{color:#142b50;font-size:18px}
-.content{padding:30px 32px 54px}
-.welcome{background:linear-gradient(110deg,#102b55 0%,#1458a9 72%,#2177d5 100%);border-radius:18px;padding:30px 32px;box-shadow:0 10px 24px rgba(16,43,85,.12)}
-.welcome h1{font-size:27px;letter-spacing:-.5px}
-.stat,.panel{border:1px solid #e8edf5;border-radius:15px;box-shadow:0 4px 16px rgba(22,48,82,.045);transition:transform .18s ease,box-shadow .18s ease}
-.stat:hover,.panel:hover{box-shadow:0 8px 22px rgba(22,48,82,.075)}
-.stat{padding:19px}
-.stat .value{color:#152d54;letter-spacing:-.6px}
-.stat .symbol{border-radius:12px}
-h2{color:#152d54}
-.pagehead h1{color:#152d54;letter-spacing:-.4px}
-button,.btn{transition:filter .16s ease,transform .16s ease}
-button:hover,.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}
-.tablewrap{box-shadow:0 4px 16px rgba(22,48,82,.035)}
-th{background:#f7f9fc}
-.footer{color:#9aa5b5}
-@media(max-width:680px){.sidebar{padding:12px 7px}.brand{background:#fff;border:1px solid #edf0f5;border-radius:10px;padding:6px 2px;min-height:58px}.brand-logo{width:42px;height:42px;object-fit:contain;background:#fff}.content{padding:16px 12px}}
-
-
-/* Supabase sign-in and sync status */
-.auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0c2041,#1458a9);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
-.auth-card{width:min(420px,100%);background:#fff;border-radius:18px;padding:28px;box-shadow:0 24px 80px #07142d55}
-.auth-card h1{margin:0 0 8px;color:#152d54;font-size:23px}.auth-card p{color:#71809a;margin:0 0 20px}
-.auth-card form{display:grid;gap:12px}.auth-card label{font-size:12px;font-weight:700;color:#5f6e83}.auth-card .field{gap:6px}
-.auth-error{color:#bd3d47;font-size:12px;min-height:18px}.auth-brand{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#1769d2;margin-bottom:12px}
-.sync-state{font-size:11px;color:#71809a}.sync-state.error{color:#bd3d47}
-
- .brand-logo-text{font-size:22px;font-weight:900;letter-spacing:2px;color:#1769d2;text-align:center}
+:root{
+  --navy:#101c35;
+  --navy2:#192b4b;
+  --gold:#d6ad55;
+  --bg:#f4f6fa;
+  --white:#fff;
+  --text:#253149;
+  --muted:#8290a5;
+  --border:#e5eaf1;
+  --green:#198754;
+  --red:#dc3545;
+  --blue:#3267b1;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+#auth-screen{
+  position:fixed;inset:0;background:linear-gradient(135deg,#101c35,#263d63);
+  display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000
+}
+.login-card{
+  background:#fff;width:100%;max-width:410px;padding:35px;border-radius:16px;
+  box-shadow:0 20px 60px #0004
+}
+.logo-mark{font-size:25px;font-weight:900;letter-spacing:2px;color:var(--navy)}
+.logo-mark span{color:var(--gold)}
+.login-card h2{margin:25px 0 5px}
+.login-card p{color:var(--muted);font-size:14px}
+.login-card input{width:100%;padding:13px;margin:8px 0;border:1px solid var(--border);border-radius:8px}
+#authError{color:var(--red);font-size:13px;min-height:18px}
+#app{display:none;min-height:100vh}
+.sidebar{
+  width:245px;background:var(--navy);color:white;position:fixed;inset:0 auto 0 0;
+  padding:25px 16px;overflow-y:auto;z-index:10
+}
+.brand{padding:5px 12px 28px;border-bottom:1px solid #ffffff20;margin-bottom:20px}
+.brand h2{font-size:20px;letter-spacing:2px;margin:0}
+.brand h2 span{color:var(--gold)}
+.brand small{color:#aab6ca;letter-spacing:2px;font-size:9px}
+.nav-label{font-size:10px;color:#8492aa;letter-spacing:1.5px;padding:15px 12px 7px}
+.nav button{
+  display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;
+  color:#c4cede;padding:12px;border-radius:8px;text-align:left;margin:3px 0;font-size:13px
+}
+.nav button:hover,.nav button.active{background:#ffffff17;color:var(--gold)}
+.main{margin-left:245px;min-height:100vh}
+.topbar{
+  height:72px;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 30px;
+  position:sticky;top:0;z-index:5
+}
+.topbar h2{font-size:19px;margin:0}
+.user-area{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+.content{padding:28px;max-width:1500px;margin:auto}
+.page{display:none}.page.active{display:block}
+.page-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.page-heading h1{font-size:23px;margin:0 0 5px}
+.page-heading p{color:var(--muted);font-size:13px;margin:0}
+.btn{
+  border:0;border-radius:7px;padding:10px 15px;font-size:12px;font-weight:700;
+  background:var(--navy);color:white
+}
+.btn:hover{opacity:.9}
+.btn.gold{background:var(--gold);color:#17233a}
+.btn.light{background:#edf1f7;color:var(--navy)}
+.btn.danger{background:#fff0f0;color:var(--red)}
+.btn.small{padding:7px 10px;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.stat,.panel{
+  background:white;border:1px solid var(--border);border-radius:12px;padding:20px
+}
+.stat small{color:var(--muted);font-size:12px}
+.stat h2{font-size:27px;margin:12px 0 5px;color:var(--navy)}
+.stat p{font-size:11px;color:var(--muted);margin:0}
+.panel{margin-top:18px}
+.panel h3{font-size:15px;margin:0 0 16px}
+.table-wrap{overflow-x:auto;background:white;border:1px solid var(--border);border-radius:10px}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--border);font-size:12px}
+th{background:#f8f9fc;color:#6e7a8e;font-size:10px;text-transform:uppercase;letter-spacing:.7px}
+td{color:var(--text)}
+tr:last-child td{border-bottom:0}
+.empty{text-align:center;color:var(--muted);padding:30px}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;background:#edf1f7;color:#526078}
+.badge.green{background:#e7f6ee;color:#198754}
+.badge.yellow{background:#fff5dc;color:#9a6c0a}
+.badge.red{background:#ffebeb;color:#c23c3c}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar input,.toolbar select{padding:10px;border:1px solid var(--border);border-radius:7px;background:white;font-size:12px}
+.toolbar input{min-width:210px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:700;color:#68758a}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:white
+}
+.field textarea{min-height:85px;resize:vertical}
+.modal-back{
+  display:none;position:fixed;inset:0;background:#0c172a99;z-index:100;
+  align-items:center;justify-content:center;padding:15px
+}
+.modal-back.show{display:flex}
+.modal{width:100%;max-width:620px;background:white;border-radius:13px;padding:24px;max-height:90vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-head h2{font-size:18px;margin:0}
+.close{border:0;background:#edf1f7;border-radius:50%;width:30px;height:30px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.caption-output{white-space:pre-wrap;line-height:1.7;background:#f7f8fb;padding:18px;border-radius:9px;font-size:13px}
+.footer{text-align:center;padding:25px;color:#a0aabc;font-size:10px}
+.sync{font-size:11px;color:var(--muted)}
+@media(max-width:900px){
+  .sidebar{width:68px;padding:18px 8px}
+  .brand{padding:8px 5px 20px}.brand h2{font-size:12px}.brand small,.nav-label,.navtext{display:none}
+  .nav button{justify-content:center;font-size:17px;padding:13px 5px}
+  .main{margin-left:68px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .topbar{padding:0 14px}.content{padding:16px}
+  .user-area #userEmail{display:none}
+  .grid{grid-template-columns:1fr 1fr;gap:9px}
+  .stat{padding:14px}.stat h2{font-size:21px}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+}
 </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar">
- <div class="brand"><div class="brand-logo-text">ADS EMPIRE</div></div>
- <div class="navlabel">Workspace</div>
- <nav class="nav" id="nav">
-  <button class="active" data-page="dashboard"><span class="ico">▦</span><span class="navtext">Dashboard</span></button>
-  <button data-page="tasks"><span class="ico">✓</span><span class="navtext">Daily Tasks</span></button>
-  <button data-page="clients"><span class="ico">♙</span><span class="navtext">Client Database</span></button>
-  <button data-page="leads"><span class="ico">◎</span><span class="navtext">Lead Tracking</span></button>
-  <button data-page="ads"><span class="ico">◈</span><span class="navtext">Ads & Campaigns</span></button>
-  <button data-page="calendar"><span class="ico">▦</span><span class="navtext">Content Calendar</span></button>
-  <button data-page="captions"><span class="ico">✎</span><span class="navtext">Caption Generator</span></button>
-  <button data-page="reports"><span class="ico">▥</span><span class="navtext">Reports & Analytics</span></button>
- </nav>
- <div class="sidefoot">Internal management portal<br>Version 1.0 · Solo workspace</div>
-</aside>
-<main class="main">
-<header class="topbar"><div class="top-title" id="topTitle">Dashboard</div><div class="top-right"><span class="sync-state" id="syncState">Connecting…</span><span class="pill">ADS EMPIRE PORTAL</span><span id="signedInEmail">Not signed in</span><button class="btn secondary small" id="logoutBtn" onclick="logoutUser()" style="display:none">Log out</button></div></header>
-<div class="content">
-<section class="page active" id="dashboard">
- <div class="welcome"><div><div class="tag">SALES & MARKETING WORKSPACE</div><h1>Grow. Connect. Succeed.</h1><p>Your daily command center for clients, leads, campaigns, and content.</p></div><div style="font-size:42px;opacity:.8">✦</div></div>
- <div class="grid stats">
-  <div class="stat"><span class="symbol">♙</span><div class="label">Total Clients</div><div class="value" id="sClients">0</div><div class="sub">Saved client records</div></div>
-  <div class="stat"><span class="symbol">◎</span><div class="label">Active Leads</div><div class="value" id="sLeads">0</div><div class="sub">Open opportunities</div></div>
-  <div class="stat"><span class="symbol">✓</span><div class="label">Tasks Pending</div><div class="value" id="sTasks">0</div><div class="sub">Not yet completed</div></div>
-  <div class="stat"><span class="symbol">◈</span><div class="label">Campaigns</div><div class="value" id="sAds">0</div><div class="sub">Campaign records</div></div>
- </div>
- <div class="grid two">
-  <div class="panel"><h3>Sales Pipeline</h3><div class="pipeline" id="dashPipeline"></div><p class="note">Lead counts by current status.</p></div>
-  <div class="panel"><h3>Today's Priorities</h3><div id="dashTasks"></div><button class="btn secondary small" onclick="showPage('tasks')">View all tasks →</button></div>
 
+<div id="auth-screen">
+  <div class="login-card">
+    <div class="logo-mark">ADS <span>EMPIRE</span></div>
+    <p>SALES & MARKETING MANAGEMENT SYSTEM</p>
+    <h2>Welcome back</h2>
+    <p>Sign in to access your company workspace.</p>
+    <form id="loginForm">
+      <input id="loginEmail" type="email" placeholder="Email address" required>
+      <input id="loginPassword" type="password" placeholder="Password" required>
+      <div id="authError"></div>
+      <button class="btn gold" id="loginBtn" style="width:100%;padding:13px" type="submit">SIGN IN</button>
+    </form>
   </div>
- <div class="grid three">
-  <div class="panel"><h3>Marketing Snapshot</h3><div class="barlist" id="dashMarketing"></div><p class="note">Based on recorded campaign budgets and results.</p></div>
-  <div class="panel"><h3>Recent Leads</h3><div id="dashLeads"></div></div>
-  <div class="panel"><h3>Quick Actions</h3><div class="quick"><button onclick="openModal('task')">＋<br>Add Task</button><button onclick="openModal('client')">＋<br>Add Client</button><button onclick="openModal('lead')">＋<br>Add Lead</button></div></div>
- </div>
-</section>
-<section class="page" id="tasks">
- <div class="pagehead"><div><h1>Daily Tasks</h1><p>Plan your day and keep every follow-up visible.</p></div><button onclick="openModal('task')">＋ Add Task</button></div>
- <div class="toolbar"><input class="search" id="taskSearch" placeholder="Search tasks..." oninput="renderTasks()"><select id="taskFilter" onchange="renderTasks()" style="max-width:170px"><option value="">All tasks</option><option>Pending</option><option>Completed</option></select></div>
- <div class="panel" id="taskList"></div>
-</section>
-<section class="page" id="clients">
- <div class="pagehead"><div><h1>Client Database</h1><p>Keep company and contact information in one place.</p></div><button onclick="openModal('client')">＋ Add Client</button></div>
- <div class="toolbar"><input class="search" id="clientSearch" placeholder="Search company or contact..." oninput="renderClients()"><select id="clientType" onchange="renderClients()" style="max-width:180px"><option value="">All client types</option><option>Prospect</option><option>Existing Client</option><option>Partner</option></select><button class="btn secondary" onclick="exportCSV('clients')">Export CSV</button></div>
- <div class="tablewrap"><table><thead><tr><th>Company</th><th>Contact Person</th><th>Phone / Email</th><th>Industry</th><th>Type</th><th>Actions</th></tr></thead><tbody id="clientRows"></tbody></table></div>
-</section>
-<section class="page" id="leads">
- <div class="pagehead"><div><h1>Lead Tracking</h1><p>Track prospects from first contact to a successful deal.</p></div><button onclick="openModal('lead')">＋ Add Lead</button></div>
- <div class="toolbar"><input class="search" id="leadSearch" placeholder="Search lead or company..." oninput="renderLeads()"><select id="leadStatusFilter" onchange="renderLeads()" style="max-width:180px"><option value="">All stages</option><option>New</option><option>Contacted</option><option>Interested</option><option>Follow-up</option><option>Negotiation</option><option>Won</option><option>Lost</option></select><button class="btn secondary" onclick="exportCSV('leads')">Export CSV</button></div>
- <div class="tablewrap"><table><thead><tr><th>Company / Lead</th><th>Contact</th><th>Source</th><th>Potential Value (₱)</th><th>Stage</th><th>Next Follow-up</th><th>Actions</th></tr></thead><tbody id="leadRows"></tbody></table></div>
-</section>
-<section class="page" id="ads">
- <div class="pagehead"><div><h1>Ads & Campaigns</h1><p>Record campaign budgets, reach, leads, and outcomes.</p></div><button onclick="openModal('ad')">＋ Add Campaign</button></div>
- <div class="grid stats">
-  <div class="stat"><div class="label">Total Budget</div><div class="value" id="adBudget">₱0</div></div><div class="stat"><div class="label">Actual Spend</div><div class="value" id="adSpend">₱0</div></div><div class="stat"><div class="label">Total Reach</div><div class="value" id="adReach">0</div></div><div class="stat"><div class="label">Leads Generated</div><div class="value" id="adLeads">0</div></div>
- </div>
- <div class="toolbar" style="margin-top:16px"><input class="search" id="adSearch" placeholder="Search campaigns..." oninput="renderAds()"><button class="btn secondary" onclick="exportCSV('ads')">Export CSV</button></div>
- <div class="tablewrap"><table><thead><tr><th>Campaign</th><th>Platform</th><th>Objective</th><th>Budget</th><th>Spend</th><th>Reach</th><th>Leads</th><th>Status</th><th>Actions</th></tr></thead><tbody id="adRows"></tbody></table></div>
-</section>
-<section class="page" id="calendar">
- <div class="pagehead"><div><h1>Content Calendar</h1><p>Schedule social posts, campaigns, and marketing activities.</p></div><button onclick="openModal('content')">＋ Add Content</button></div>
- <div class="toolbar"><button class="btn secondary" onclick="changeMonth(-1)">← Previous</button><b id="monthLabel"></b><button class="btn secondary" onclick="changeMonth(1)">Next →</button><button class="btn secondary" onclick="openModal('content')">Add schedule</button></div>
- <div class="calendar" id="calendarGrid"></div>
- <div class="panel" style="margin-top:16px"><h3>Scheduled Content</h3><div id="contentList"></div></div>
-</section>
-<section class="page" id="captions">
- <div class="pagehead"><div><h1>Caption Generator</h1><p>Create a first-draft caption for Ads Empire social media content.</p></div></div>
- <div class="grid two">
-  <div class="panel"><h3>Caption details</h3><div class="field"><label>Product / Service</label><input id="capProduct" placeholder="e.g. Customized corporate giveaways"></div><div class="field" style="margin-top:10px"><label>Key benefit or message</label><textarea id="capBenefit" placeholder="What should customers know?"></textarea></div><div class="formgrid" style="margin-top:10px"><div class="field"><label>Platform</label><select id="capPlatform"><option>Facebook</option><option>Instagram</option><option>LinkedIn</option></select></div><div class="field"><label>Tone</label><select id="capTone"><option>Professional</option><option>Friendly</option><option>Persuasive</option><option>Short and catchy</option></select></div></div><div class="field" style="margin-top:10px"><label>Call to action</label><input id="capCTA" value="Message us today for inquiries!"></div><button style="margin-top:14px" onclick="generateCaption()">Generate caption</button></div>
-  <div class="panel"><h3>Caption draft</h3><textarea id="capOutput" style="min-height:280px" placeholder="Your generated caption will appear here..."></textarea><div class="toolbar" style="margin-top:10px"><button class="btn secondary" onclick="copyCaption()">Copy caption</button><button class="btn secondary" onclick="saveCaption()">Save to content calendar</button></div><p class="note">Review all product details, prices, offers, and claims before publishing. This generator uses local templates and does not connect to an AI service.</p></div>
- </div>
-</section>
-<section class="page" id="reports">
- <div class="pagehead"><div><h1>Reports & Analytics</h1><p>Review sales activity and marketing results using your recorded data.</p></div><button class="btn secondary" onclick="exportCSV('all')">Export all data</button></div>
- <div class="grid stats">
-  <div class="stat"><div class="label">Lead Conversion Rate</div><div class="value" id="rConversion">0%</div><div class="sub">Won ÷ total leads</div></div>
-  <div class="stat"><div class="label">Open Opportunities</div><div class="value" id="rOpen">0</div><div class="sub">New through Negotiation</div></div>
-  <div class="stat"><div class="label">Campaign Leads</div><div class="value" id="rAdLeads">0</div><div class="sub">Recorded campaign results</div></div>
-  <div class="stat"><div class="label">Completed Tasks</div><div class="value" id="rTasks">0</div><div class="sub">All-time completed</div></div>
- </div>
- <div class="grid two">
-  <div class="panel"><h3>Lead stage distribution</h3><div id="reportStages" class="barlist"></div></div>
-  <div class="panel"><h3>Campaign performance</h3><div id="reportCampaigns" class="barlist"></div></div>
- </div>
- <div class="panel" style="margin-top:16px"><h3>Data quality checklist</h3><div class="taskrow"><span>✓</span><span class="taskname">Record every new inquiry as a lead.</span></div><div class="taskrow"><span>✓</span><span class="taskname">Set a next follow-up date for active prospects.</span></div><div class="taskrow"><span>✓</span><span class="taskname">Update campaign spend and results after each campaign.</span></div><div class="taskrow"><span>✓</span><span class="taskname">Complete daily tasks to maintain an accurate activity record.</span></div></div>
-</section>
-<div class="footer">ADS EMPIRE CORPORATION · INTERNAL SALES & MARKETING PORTAL · Securely synced to your Supabase account.</div>
-</div></main></div>
-
-<div class="auth-screen" id="authScreen">
- <div class="auth-card">
-  <div class="auth-brand">ADS EMPIRE CORPORATION</div>
-  <h1>Sales & Marketing Portal</h1>
-  <p>Sign in with your authorized Ads Empire account to access the workspace.</p>
-  <form id="loginForm">
-   <div class="field"><label for="loginEmail">EMAIL ADDRESS</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="name@company.com"></div>
-   <div class="field"><label for="loginPassword">PASSWORD</label><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Enter your password"></div>
-   <div class="auth-error" id="authError" role="alert"></div>
-   <button type="submit" id="loginBtn">Sign in</button>
-  </form>
-  <div class="note">User accounts must be created or invited in Supabase Authentication.</div>
- </div>
 </div>
 
-<div class="modalback" id="modalBack"><div class="modal"><div class="modalhead"><h3 id="modalTitle">Add record</h3><button class="btn secondary small" onclick="closeModal()">✕</button></div><form id="recordForm"><div class="formgrid" id="formFields"></div><div class="formactions"><button type="button" class="btn secondary" onclick="closeModal()">Cancel</button><button type="submit">Save record</button></div></form></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>ADS <span>EMPIRE</span></h2>
+      <small>SALES & MARKETING</small>
+    </div>
+    <div class="nav">
+      <div class="nav-label">WORKSPACE</div>
+      <button class="active" data-page="dashboard"><span>▦</span><span class="navtext">Dashboard</span></button>
+      <button data-page="tasks"><span>✓</span><span class="navtext">Daily Tasks</span></button>
+      <div class="nav-label">SALES MANAGEMENT</div>
+      <button data-page="clients"><span>♙</span><span class="navtext">Client Database</span></button>
+      <button data-page="leads"><span>◎</span><span class="navtext">Lead Tracking</span></button>
+      <div class="nav-label">MARKETING</div>
+      <button data-page="ads"><span>▣</span><span class="navtext">Ads & Campaigns</span></button>
+      <button data-page="calendar"><span>▦</span><span class="navtext">Content Calendar</span></button>
+      <button data-page="captions"><span>✎</span><span class="navtext">Caption Generator</span></button>
+      <div class="nav-label">PERFORMANCE</div>
+      <button data-page="reports"><span>▤</span><span class="navtext">Reports & Analytics</span></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h2 id="topTitle">Dashboard</h2>
+      <div class="user-area">
+        <span class="sync" id="syncStatus">Connecting...</span>
+        <span id="userEmail"></span>
+        <button class="btn light small" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="page active" id="dashboard">
+        <div class="page-heading">
+          <div><h1>Dashboard Overview</h1><p>Welcome to your Ads Empire workspace.</p></div>
+          <button class="btn gold" onclick="openModal('task')">+ Add Task</button>
+        </div>
+        <div class="grid">
+          <div class="stat"><small>MONTHLY SALES TARGET</small><h2>₱1,000,000</h2><p>Company target</p></div>
+          <div class="stat"><small>ACTIVE CLIENTS</small><h2 id="statClients">0</h2><p>Saved client records</p></div>
+          <div class="stat"><small>ACTIVE LEADS</small><h2 id="statLeads">0</h2><p>Sales opportunities</p></div>
+          <div class="stat"><small>PENDING TASKS</small><h2 id="statTasks">0</h2><p>Tasks not completed</p></div>
+        </div>
+        <div class="panel">
+          <h3>Recent Leads</h3>
+          <div id="dashboardLeads"></div>
+        </div>
+        <div class="panel">
+          <h3>Upcoming Tasks</h3>
+          <div id="dashboardTasks"></div>
+        </div>
+      </section>
+
+      <section class="page" id="tasks">
+        <div class="page-heading">
+          <div><h1>Daily Tasks</h1><p>Organize follow-ups, meetings, and deliverables.</p></div>
+          <button class="btn gold" onclick="openModal('task')">+ Add Task</button>
+        </div>
+        <div id="tasksTable"></div>
+      </section>
+
+      <section class="page" id="clients">
+        <div class="page-heading">
+          <div><h1>Client Database</h1><p>Manage existing and potential customers.</p></div>
+          <button class="btn gold" onclick="openModal('client')">+ Add Client</button>
+        </div>
+        <div id="clientsTable"></div>
+      </section>
+
+      <section class="page" id="leads">
+        <div class="page-heading">
+          <div><h1>Lead Tracking</h1><p>Monitor prospects and sales opportunities.</p></div>
+          <button class="btn gold" onclick="openModal('lead')">+ Add Lead</button>
+        </div>
+        <div id="leadsTable"></div>
+      </section>
+
+      <section class="page" id="ads">
+        <div class="page-heading">
+          <div><h1>Ads & Campaigns</h1><p>Track promotions, marketing initiatives, and campaign results.</p></div>
+          <button class="btn gold" onclick="openModal('ad')">+ Add Campaign</button>
+        </div>
+        <div id="adsTable"></div>
+      </section>
+
+      <section class="page" id="calendar">
+        <div class="page-heading">
+          <div><h1>Content Calendar</h1><p>Plan and monitor your social media content.</p></div>
+          <button class="btn gold" onclick="openModal('content')">+ Add Content</button>
+        </div>
+        <div id="contentTable"></div>
+      </section>
+
+      <section class="page" id="captions">
+        <div class="page-heading">
+          <div><h1>Caption Generator</h1><p>Create marketing copy for Ads Empire products and services.</p></div>
+        </div>
+        <div class="panel">
+          <div class="form-grid">
+            <div class="field">
+              <label>Product / Service</label>
+              <input id="captionProduct" placeholder="e.g. Customized giveaways">
+            </div>
+            <div class="field">
+              <label>Platform</label>
+              <select id="captionPlatform">
+                <option>Facebook</option><option>Instagram</option><option>LinkedIn</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Campaign Objective</label>
+              <select id="captionObjective">
+                <option>Generate inquiries</option><option>Promote a product</option>
+                <option>Build brand awareness</option><option>Announce a promotion</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Tone</label>
+              <select id="captionTone">
+                <option>Professional</option><option>Friendly</option><option>Persuasive</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn gold" style="margin-top:17px" onclick="generateCaption()">Generate Caption</button>
+          <div id="captionResult" style="margin-top:20px"></div>
+        </div>
+      </section>
+
+      <section class="page" id="reports">
+        <div class="page-heading">
+          <div><h1>Reports & Analytics</h1><p>Review your current sales and marketing activity.</p></div>
+          <button class="btn light" onclick="exportReport()">Export CSV</button>
+        </div>
+        <div class="grid">
+          <div class="stat"><small>TOTAL CLIENTS</small><h2 id="reportClients">0</h2></div>
+          <div class="stat"><small>TOTAL LEADS</small><h2 id="reportLeads">0</h2></div>
+          <div class="stat"><small>WON LEADS</small><h2 id="reportWon">0</h2></div>
+          <div class="stat"><small>CAMPAIGNS</small><h2 id="reportAds">0</h2></div>
+        </div>
+        <div class="panel">
+          <h3>Lead Pipeline</h3>
+          <div id="pipelineReport"></div>
+        </div>
+      </section>
+
+      <div class="footer">ADS EMPIRE CORPORATION · INTERNAL SALES & MARKETING SYSTEM</div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add Record</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <form id="recordForm">
+      <div class="form-grid" id="formFields"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn light" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn gold">Save Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
-const SUPABASE_URL='https://oegjxuaxrnxaveoqaqoa.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lZ2p4dWF4cm54YXZlb3FhcW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0NDYwMTMsImV4cCI6MjExMDAyMjAxM30.dkQ7abmoSKLFiI_eJIn7KgZsCoQC3iSh8nQRoTChF4U';
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-const KEY='adsEmpireSM_v1';
-const EMPTY_DB={clients:[],leads:[],tasks:[],ads:[],content:[]};
-let db=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(EMPTY_DB));
-let currentUser=null,editId=null,formType=null,calDate=new Date(),saveQueue=Promise.resolve();
-const $=id=>document.getElementById(id), money=n=>'₱'+Number(n||0).toLocaleString('en-PH'), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function setSyncStatus(message,isError=false){const el=$('syncState');if(el){el.textContent=message;el.classList.toggle('error',isError)}}
-function showAuth(message=''){$('authScreen').style.display='flex';$('authError').textContent=message;$('logoutBtn').style.display='none';$('signedInEmail').textContent='Not signed in'}
-function hideAuth(){$('authScreen').style.display='none';$('logoutBtn').style.display='inline-block';$('signedInEmail').textContent=currentUser?.email||'Signed in'}
-async function activateUser(user){
- currentUser=user;
- setSyncStatus('Loading cloud data…');
- try {
-  const {data,error}=await supabaseClient.from('app_data').select('data').eq('user_id',user.id).maybeSingle();
-  if(error) throw error;
-  if(data?.data) {
-   db={...EMPTY_DB,...data.data};
-   localStorage.setItem(KEY,JSON.stringify(db));
-  } else {
-   // First login: preserve and migrate any existing browser records into this user's cloud workspace.
-   const cached=JSON.parse(localStorage.getItem(KEY)||'null');
-   if(cached) db={...EMPTY_DB,...cached};
-   const {error:insertError}=await supabaseClient.from('app_data').upsert({user_id:user.id,data:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-   if(insertError) throw insertError;
+/* =========================================================
+   SUPABASE CONFIGURATION
+   Use your Supabase project URL and anon/public key.
+   Never put a service-role or secret key in this file.
+========================================================= */
+const SUPABASE_URL = 'https://oegjxuaxrnxaveoqaqoa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lZ2p4dWF4cm54YXZlb3FhcW9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0NDYwMTMsImV4cCI6MjExMDAyMjAxM30.dkQ7abmoSKLFiI_eJIn7KgZsCoQC3iSh8nQRoTChF4U';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+/* =========================================================
+   APP DATA
+========================================================= */
+const STORAGE_KEY = 'adsEmpireSM_v1';
+
+const emptyData = () => ({
+  clients: [],
+  leads: [],
+  tasks: [],
+  ads: [],
+  content: []
+});
+
+let appData = emptyData();
+let currentUser = null;
+let currentType = null;
+let editingId = null;
+let saveQueue = Promise.resolve();
+let activationToken = 0;
+let authReady = false;
+
+const $ = id => document.getElementById(id);
+
+function uid(){
+  return (crypto.randomUUID ? crypto.randomUUID() :
+    'id-' + Date.now() + '-' + Math.random().toString(16).slice(2));
+}
+
+function localData(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return {...emptyData(), ...saved};
+  } catch(e) {
+    return emptyData();
   }
-  hideAuth();renderAll();setSyncStatus('Cloud synced');
- } catch(error) {
-  console.error('Supabase load error:',error);
-  setSyncStatus('Database setup needed',true);
-  showAuth('Could not load your cloud workspace: '+(error.message||'Unknown error')+'. Check that the app_data table and RLS policies are installed.');
- }
 }
-async function loginUser(event){
- event.preventDefault();
- const button=$('loginBtn');button.disabled=true;button.textContent='Signing in…';$('authError').textContent='';
- try {
-  const {data,error}=await supabaseClient.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
-  if(error) throw error;
-  await activateUser(data.user);
- } catch(error) {
-  $('authError').textContent=error.message||'Unable to sign in.';
- } finally {button.disabled=false;button.textContent='Sign in'}
+
+function setSync(message, color){
+  $('syncStatus').textContent = message;
+  $('syncStatus').style.color = color || '';
 }
-async function logoutUser(){
- const {error}=await supabaseClient.auth.signOut();
- if(error){alert(error.message);return}
- currentUser=null;db={...EMPTY_DB};showAuth();setSyncStatus('Signed out');
+
+function escapeHTML(value){
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
 }
-$('loginForm').addEventListener('submit',loginUser);
-async function save(){
- localStorage.setItem(KEY,JSON.stringify(db));renderAll();
- if(!currentUser){setSyncStatus('Saved on this device only',true);return}
- // Serialize writes so rapid edits do not overwrite newer data with an older request.
- const snapshot=JSON.parse(JSON.stringify(db));
- saveQueue=saveQueue.then(async()=>{
-  const {error}=await supabaseClient.from('app_data').upsert({user_id:currentUser.id,data:snapshot,updated_at:new Date().toISOString()},{onConflict:'user_id'});
-  if(error) throw error;
-  setSyncStatus('Cloud synced');
- }).catch(error=>{console.error('Supabase save error:',error);setSyncStatus('Sync failed: '+(error.message||'check database policies'),true)});
- return saveQueue;
+
+function money(value){
+  return '₱' + Number(value || 0).toLocaleString('en-PH');
 }
-function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));$('topTitle').textContent=document.querySelector(`[data-page="${p}"] .navtext`).textCon
+
+function dateText(value){
+  if(!value) return '—';
+  const date = new Date(value + (String(value).length === 10 ? 'T00:00:00' : ''));
+  return isNaN(date) ? value : date.toLocaleDateString('en-PH');
+}
+
+/* =========================================================
+   AUTHENTICATION AND CLOUD DATA
+========================================================= */
+async function activateUser(user){
+  const token = ++activationToken;
+  currentUser = user;
+  $('auth-screen').style.display = 'none';
+  $('app').style.display = 'block';
+  $('userEmail').textContent = user.email || '';
+  setSync('Loading cloud data...');
+
+  try {
+    const {data, error} = await supabaseClient
+      .from('app_data')
+      .select('data')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if(token !== activationToken) return;
+    if(error) throw error;
+
+    if(data && data.data){
+      appData = {...emptyData(), ...data.data};
+    } else {
+      // First login: migrate this browser's existing saved records.
+      appData = localData();
+      const {error: insertError} = await supabaseClient
+        .from('app_data')
+        .upsert({
+          user_id: user.id,
+          data: appData,
+          updated_at: new Date().toISOString()
+        }, {onConflict:'user_id'});
+
+      if(insertError) throw insertError;
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    renderAll();
+    setSync('Cloud synced', '#198754');
+  } catch(error) {
+    console.error('Cloud load error:', error);
+    appData = localData();
+    renderAll();
+    setSync('Cloud error – check database settings', '#dc3545');
+    alert('You are signed in, but cloud data could not be loaded. Your browser data is still available. Check your app_data table and Row Level Security policies. Details: ' + error.message);
+  }
+}
+
+async function saveData(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  renderAll();
+
+  if(!currentUser) {
+    setSync('Saved locally');
+    return;
+  }
+
+  const snapshot = JSON.parse(JSON.stringify(appData));
+  const userId = currentUser.id;
+
+  saveQueue = saveQueue.then(async () => {
+    setSync('Saving...');
+    const {error} = await supabaseClient
+      .from('app_data')
+      .upsert({
+        user_id: userId,
+        data: snapshot,
+        updated_at: new Date().toISOString()
+      }, {onConflict:'user_id'});
+
+    if(error) throw error;
+    if(currentUser && currentUser.id === userId) setSync('Cloud synced', '#198754');
+  }).catch(error => {
+    console.error('Cloud save error:', error);
+    setSync('Sync failed – saved locally', '#dc3545');
+  });
+
+  await saveQueue;
+}
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const button = $('loginBtn');
+  button.disabled = true;
+  button.textContent = 'SIGNING IN...';
+  $('authError').textContent = '';
+
+  const {error} = await supabaseClient.auth.signInWithPassword({
+    email: $('loginEmail').value.trim(),
+    password: $('loginPassword').value
+  });
+
+  if(error) $('authError').textContent = error.message;
+  button.disabled = false;
+  button.textContent = 'SIGN IN';
+});
+
+$('logoutBtn').addEventListener('click', async () => {
+  const {error} = await supabaseClient.auth.signOut();
+  if(error) {
+    alert(error.message);
+    return;
+  }
+  activationToken++;
+  currentUser = null;
+  $('app').style.display = 'none';
+  $('auth-screen').style.display = 'flex';
+  setSync('Signed out');
+});
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if(!authReady) return;
+  if(session?.user) {
+    if(!currentUser || currentUser.id !== session.user.id) {
+      setTimeout(() => activateUser(session.user), 0);
+    }
+  } else {
+    activationToken++;
+    currentUser = null;
+    $('app').style.display = 'none';
+    $('auth-screen').style.display = 'flex';
+  }
+});
+
+async function initializeAuth(){
+  const {data, error} = await supabaseClient.auth.getSession();
+  if(error) {
+    $('authError').textContent = error.message;
+  } else if(data.session?.user) {
+    await activateUser(data.session.user);
+  }
+  authReady = true;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+const pageNames = {
+  dashboard:'Dashboard',
+  tasks:'Daily Tasks',
+  clients:'Client Database',
+  leads:'Lead Tracking',
+  ads:'Ads & Campaigns',
+  calendar:'Content Calendar',
+  captions:'Caption Generator',
+  reports:'Reports & Analytics'
+};
+
+document.querySelectorAll('.nav button').forEach(button => {
+  button.addEventListener('click', () => showPage(button.dataset.page));
+});
+
+function showPage(page){
+  if(!pageNames[page]) return;
+  document.querySelectorAll('.page').forEach(el =>
+    el.classList.toggle('active', el.id === page)
+  );
+  document.querySelectorAll('.nav button').forEach(el =>
+    el.classList.toggle('active', el.dataset.page === page)
+  );
+  $('topTitle').textContent = pageNames[page];
+}
+
+/* =========================================================
+   CRUD FOR APP MODULES
+========================================================= */
+const configs = {
+  client:{
+    title:'Client',
+    collection:'clients',
+    fields:[
+      ['name','Client / Company Name','text',true],
+      ['contact','Contact Person','text'],
+      ['phone','Phone Number','text'],
+      ['email','Email Address','email'],
+      ['industry','Industry','text'],
+      ['status','Status','select',['Active','Potential','Inactive']],
+      ['notes','Notes','textarea']
+    ],
+    columns:['name','contact','phone','industry','status']
+  },
+  lead:{
+    title:'Lead',
+    collection:'leads',
+    fields:[
+      ['company','Company / Prospect','text',true],
+      ['contact','Contact Person','text'],
+      ['phone','Phone Number','text'],
+      ['email','Email Address','email'],
+      ['source','Lead Source','select',['Call','Email','Referral','Walk-in','Facebook','Other']],
+      ['interest','Product / Service Interested In','text'],
+      ['value','Estimated Value (₱)','number'],
+      ['status','Lead Status','select',['New','Contacted','Interested','Quotation Sent','Negotiation','Won','Lost']],
+      ['followup','Next Follow-up Date','date'],
+      ['notes','Notes / Updates','textarea']
+    ],
+    columns:['company','contact','interest','value','status','followup']
+  },
+  task:{
+    title:'Task',
+    collection:'tasks',
+    fields:[
+      ['title','Task Description','text',true],
+      ['category','Category','select',['Sales','Marketing','Admin','Client Follow-up','Production','Other']],
+      ['due','Due Date','date'],
+      ['priority','Priority','select',['Low','Medium','High']],
+      ['status','Status','select',['Pending','In Progress','Completed']],
+      ['notes','Notes','textarea']
+    ],
+    columns:['title','category','due','priority','status']
+  },
+  ad:{
+    title:'Campaign',
+    collection:'ads',
+    fields:[
+      ['name','Campaign Name','text',true],
+      ['platform','Platform','select',['Facebook','Instagram','LinkedIn','Print','Other']],
+      ['objective','Objective','text'],
+      ['budget','Budget (₱)','number'],
+      ['start','Start Date','date'],
+      ['end','End Date','date'],
+      ['status','Status','select',['Planned','Ongoing','Completed','Paused']],
+      ['notes','Notes','textarea']
+    ],
+    columns:['name','platform','objective','budget','status']
+  },
+  content:{
+    title:'Content',
+    collection:'content',
+    fields:[
+      ['title','Content Title','text',true],
+      ['platform','Platform','select',['Facebook','Instagram','LinkedIn','Other']],
+      ['type','Content Type','select',['Product Feature','Promotional','Educational','Behind the Scenes','Testimonial','Announcement']],
+      ['date','Publish Date','date'],
+      ['status','Status','select',['Idea','For Design','For Approval','Scheduled','Published']],
+      ['caption','Caption / Content Notes','textarea']
+    ],
+    columns:['title','platform','type','date','status']
+  }
+};
+
+function openModal(type, id){
+  currentType = type;
+  editingId = id || null;
+  const config = configs[type];
+  if(!config) return;
+
+  const record = id ? appData[config.collection].find(x => x.id === id) : {};
+  $('modalTitle').textContent = (id ? 'Edit ' : 'Add ') + config.title;
+
+  $('formFields').innerHTML = config.fields.map(field => {
+    const [key,label,inputType,required,options] = field;
+    const value = record?.[key] ?? '';
+    let control = '';
+
+    if(inputType === 'select'){
+      control = `<select name="${key}" ${required?'required':''}>
+        ${options.map(option =>
+          `<option value="${escapeHTML(option)}" ${value===option?'selected':''}>${escapeHTML(option)}</option>`
+        ).join('')}
+      </select>`;
+    } else if(inputType === 'textarea'){
+      control = `<textarea name="${key}">${escapeHTML(value)}</textarea>`;
+    } else {
+      control = `<input name="${key}" type="${inputType}" value="${escapeHTML(value)}" ${required?'required':''} ${inputType==='number'?'min="0"':''}>`;
+    }
+
+    return `<div class="field ${inputType==='textarea'?'full':''}">
+      <label>${escapeHTML(label)}</label>${control}
+    </div>`;
+  }).join('');
+
+  $('modalBack').classList.add('show');
+}
+
+function closeModal(){
+  $('modalBack').classList.remove('show');
+  $('recordForm').reset();
+  currentType = null;
+  editingId = null;
+}
+
+$('recordForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if(!currentType) return;
+
+  const config = configs[currentType];
+  const formData = new FormData(e.target);
+  const record = Object.fromEntries(formData.entries());
+
+  config.fields.forEach(field => {
+    if(field[2] === 'number') record[field[0]] = Number(record[field[0]] || 0);
+  });
+
+  if(editingId){
+    const index = appData[config.collection].findIndex(x => x.id === editingId);
+    if(index !== -1) {
+      appData[config.collection][index] = {
+        ...appData[config.collection][index],
+        ...record,
+        updatedAt:new Date().toISOString()
+      };
+    }
+  } else {
+    appData[config.collection].unshift({
+      id:uid(),
+      ...record,
+      createdAt:new Date().toISOString()
+    });
+  }
+
+  closeModal();
+  await saveData();
+});
+
+function deleteRecord(collection,id){
+  if(!confirm('Are you sure you want to delete this record?')) return;
+  appData[collection] = appData[collection].filter(x => x.id !== id);
+  saveData();
+}
+
+function editRecord(type,id){
+  openModal(type,id);
+}
+
+function toggleTask(id){
+  const task = appData.tasks.find(x => x.id === id);
+  if(!task) return;
+  task.status = task.status === 'Completed' ? 'Pending' : 'Completed';
+  saveData();
+}
+
+/* =========================================================
+   TABLE RENDERING
+========================================================= */
+function badge(value){
+  const v = String(value || '—');
+  let color = '';
+  if(['Completed','Won','Active','Published'].includes(v)) color='green';
+  if(['In Progress','Interested','Quotation Sent','Ongoing','Scheduled'].includes(v)) color='yellow';
+  if(['Lost','Inactive','Paused'].includes(v)) color='red';
+  return `<span class="badge ${color}">${escapeHTML(v)}</span>`;
+}
+
+function renderTable(collection, type, containerId){
+  const config = configs[type];
+  const records = appData[collection] || [];
+  const headings = config.columns.map(key => {
+    const field = config.fields.find(f => f[0] === key);
+    return field ? field[1] : key;
+  });
+
+  if(!records.length){
+    $(containerId).innerHTML = `<div class="panel empty">No records yet. Click the Add button to create your first record.</div>`;
+    return;
+  }
+
+  $(containerId).innerHTML = `
+    <div class="toolbar">
+      <input id="${containerId}Search" placeholder="Search records..." oninput="filterTable('${containerId}')">
+      <span class="sync">${records.length} record(s)</span>
+    </div>
+    <div class="table-wrap">
+      <table id="${containerId}Grid">
+        <thead><tr>${headings.map(h=>`<th>${escapeHTML(h)}</th>`).join('')}<th>Actions</th></tr></thead>
+        <tbody>
+          ${records.map(record => `
+            <tr>
+              ${config.columns.map(key => {
+                let value = record[key] ?? '—';
+                if(key === 'value' || key === 'budget') value = money(value);
+                if(['status','priority'].includes(key)) value = badge(value);
+                else value = escapeHTML(value);
+                if(['due','date','followup','start','end'].includes(key)) value = dateText(value);
+                return `<td>${value}</td>`;
+              }).join('')}
+              <td>
+                <button class="btn light small" onclick="editRecord('${type}','${record.id}')">Edit</button>
+                <button class="btn danger small" onclick="deleteRecord('${collection}','${record.id}')">Delete</button>
+                ${type==='task'?`<button class="btn small" onclick="toggleTask('${record.id}')">✓</button>`:''}
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function filterTable(containerId){
+  const input = $(containerId+'Search');
+  const table = $(containerId+'Grid');
+  if(!input || !table) return;
+  const term = input.value.toLowerCase();
+  table.querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+  });
+}
+
+/* =========================================================
+   DASHBOARD AND REPORTS
+========================================================= */
+function miniTable(records, fields, collection, type){
+  if(!records.length) return '<div class="empty">No records to display.</div>';
+  return `<div class="table-wrap"><table><thead><tr>
+    ${fields.map(f=>`<th>${escapeHTML(f.label)}</th>`).join('')}
+  </tr></thead><tbody>
+    ${records.slice(0,5).map(r=>`<tr>
+      ${fields.map(f=>`<td>${f.key==='status'?badge(r[f.key]):escapeHTML(r[f.key] || '—')}</td>`).join('')}
+    </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderDashboard(){
+  $('statClients').textContent = appData.clients.length;
+  $('statLeads').textContent = appData.leads.filter(l=>!['Won','Lost'].includes(l.status)).length;
+  $('statTasks').textContent = appData.tasks.filter(t=>t.status!=='Completed').length;
+
+  $('dashboardLeads').innerHTML = miniTable(
+    appData.leads,
+    [{key:'company',label:'Company'},{key:'interest',label:'Interest'},{key:'status',label:'Status'}]
+  );
+
+  const tasks = [...appData.tasks].sort((a,b)=>(a.due||'').localeCompare(b.due||''));
+  $('dashboardTasks').innerHTML = miniTable(
+    tasks,
+    [{key:'title',label:'Task'},{key:'due',label:'Due Date'},{key:'status',label:'Status'}]
+  );
+}
+
+function renderReports(){
+  $('reportClients').textContent = appData.clients.length;
+  $('reportLeads').textContent = appData.leads.length;
+  $('reportWon').textContent = appData.leads.filter(l=>l.status==='Won').length;
+  $('reportAds').textContent = appData.ads.length;
+
+  const statuses = ['New','Contacted','Interested','Quotation Sent','Negotiation','Won','Lost'];
+  const total = appData.leads.length;
+  $('pipelineReport').innerHTML = statuses.map(status => {
+    const count = appData.leads.filter(l=>l.status===status).length;
+    const percent = total ? Math.round(count/total*100) : 0;
+    return `<div style="margin:15px 0">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+        <span>${escapeHTML(status)}</span><b>${count} (${percent}%)</b>
+      </div>
+      <div style="height:8px;background:#edf1f7;border-radius:10px;overflow:hidden">
+        <div style="height:100%;width:${percent}%;background:#d6ad55"></div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty">No lead data available.</div>';
+}
+
+function renderAll(){
+  renderDashboard();
+  renderTable('tasks','task','tasksTable');
+  renderTable('clients','client','clientsTable');
+  renderTable('leads','lead','leadsTable');
+  renderTable('ads','ad','adsTable');
+  renderTable('content','content','contentTable');
+  renderReports();
+}
+
+/* =========================================================
+   CAPTION GENERATOR
+========================================================= */
+function generateCaption(){
+  const product = $('captionProduct').value.trim();
+  if(!product){
+    alert('Please enter a product or service.');
+    return;
+  }
+
+  const platform = $('captionPlatform').value;
+  const objective = $('captionObjective').value;
+  const tone = $('captionTone').value;
+
+  const opening = tone === 'Friendly'
+    ? `Looking for quality ${product}?`
+    : tone === 'Persuasive'
+    ? `Make your brand stand out with ${product}!`
+    : `Elevate your brand with professional ${product}.`;
+
+  const caption = `${opening}
+
+At Ads Empire Corporation, we help businesses create advertising materials and customized printing solutions that make an impact.
+
+Whether you're preparing for a campaign, corporate event, business launch, or promotional activity, we're ready to help bring your ideas to life.
+
+${objective === 'Generate inquiries'
+  ? 'Send us a message today for inquiries and quotation!'
+  : objective === 'Promote a product'
+  ? 'Discover how we can help promote your brand.'
+  : objective === 'Build brand awareness'
+  ? 'Be seen, chosen, and remembered with Ads Empire.'
+  : 'Get in touch with us and let’s discuss your next project!'}
+
+#AdsEmpire #PrintingSolutions #AdvertisingMaterials #Signage`;
+
+  $('captionResult').innerHTML = `
+    <h3>Your ${escapeHTML(platform)} Caption</h3>
+    <div class="caption-output" id="captionText">${escapeHTML(caption)}</div>
+    <button class="btn gold" style="margin-top:12px" onclick="copyCaption()">Copy Caption</button>`;
+}
+
+function copyCaption(){
+  const text = $('captionText')?.innerText || '';
+  navigator.clipboard.writeText(text)
+    .then(()=>alert('Caption copied!'))
+    .catch(()=>alert('Unable to copy automatically. Please select and copy the text.'));
+}
+
+/* =========================================================
+   CSV EXPORT
+========================================================= */
+function exportReport(){
+  const rows = [
+    ['Lead / Company','Contact','Interest','Estimated Value','Status','Follow-up Date'],
+    ...appData.leads.map(l=>[
+      l.company,l.contact,l.interest,l.value,l.status,l.followup
+    ])
+  ];
+
+  const csv = rows.map(row =>
+    row.map(value => `"${String(value ?? '').replace(/"/g,'""')}"`).join(',')
+  ).join('\n');
+
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Ads-Empire-Lead-Report.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   START APPLICATION
+========================================================= */
+initializeAuth();
+</script>
+</body>
+</html>
